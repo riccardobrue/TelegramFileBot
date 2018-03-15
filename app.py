@@ -239,10 +239,10 @@ def get_file(bot, update):
     # userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
     #url = "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/505218/IC_Energy_Report_web.pdf"
-    url = "http://audio.radio24.ilsole24ore.com/radio24_audio/2018/180314-lazanzara.mp3"
+    url="https://github.com/riccardobrue/hello_world/blob/master/testing_zip.zip?raw=true"
     file = urlopen(url)
-    #content.name = 'testing.pdf'
-    file.name = 'testing.mp3'
+    file.name = 'testing.pdf'
+
     meta = file.info()
     mb_size=int(meta["Content-Length"])
     if mb_size>=20000000:
