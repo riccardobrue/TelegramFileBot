@@ -244,8 +244,9 @@ def get_file(bot, update):
     file.name = 'testing.zip'
 
     meta = file.info()
-    mb_size=int(meta["Content-Length"])
-    if mb_size>=20000000:
+    byte_size=int(meta["Content-Length"])
+    print("SIZE (bytes): "+byte_size)
+    if byte_size>=20000000:
         update.message.reply_text("File too large to be downloaded via telegram!")
     else:
         bot.send_document(chat_id=chat_id, document=file)
