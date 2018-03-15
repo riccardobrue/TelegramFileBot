@@ -264,15 +264,15 @@ def send_file(bot, update):
     userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
 
-    print("A")
-    #file = bot.get_file(update.message.document[-1].file_id)
+
     print("B")
-    file_name = update.message.document[-1].file_name
+    file_name = update.message.document.file_name
     print("C")
-    file_type = update.message.document[-1].mime_type
+    file_type = update.message.document.mime_type
     print("D")
-    file_size = update.message.document[-1].file_size
-    print("D")
+    file_size = update.message.document.file_size
+    print("A")
+    file = bot.get_file(update.message.document.file_id)
 
     # file = bot.get_file(update.message.photo[-1].file_id)
     file.download('user_photo.jpg')
@@ -283,7 +283,6 @@ def send_file(bot, update):
 
 # ==============================================================================================
 # ==============================================================================================
-
 
 
 def openshiftStart():
