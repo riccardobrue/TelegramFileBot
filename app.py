@@ -265,20 +265,17 @@ def send_file(bot, update):
     chat_id = update.message.chat_id
 
 
-    print("B")
     file_name = update.message.document.file_name
-    print("C")
     file_type = update.message.document.mime_type
-    print("D")
     file_size = update.message.document.file_size
-    print("A")
-    file = bot.get_file(update.message.document.file_id)
 
-    # file = bot.get_file(update.message.photo[-1].file_id)
-    file.download('user_photo.jpg')
+    print(file_name+"_"+str(file_type)+"_"+str(file_size))
+    
+    file = bot.get_file(update.message.document.file_id)
+    file.download('file.jpg')
     print("File of" + userName + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
 
-    bot.send_photo(chat_id=chat_id, photo=file)
+    update.message.reply_text("File received!")
 
 
 # ==============================================================================================
