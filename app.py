@@ -1,6 +1,7 @@
 import logging
 import db_manager
 import datetime
+from io import BytesIO
 from urllib.request import urlopen
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
@@ -238,7 +239,11 @@ def get_file(bot, update):
     # userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
     url = "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/505218/IC_Energy_Report_web.pdf"
+    #url = "http://audio.radio24.ilsole24ore.com/radio24_audio/2018/180314-lazanzara.mp3"
     content = urlopen(url)
+
+    content.name = 'testing.pdf'
+
 
     bot.send_document(chat_id=chat_id, document=content)
     #bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
