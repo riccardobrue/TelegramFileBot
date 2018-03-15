@@ -202,13 +202,9 @@ def error(bot, update, error):
 
 #==========================------------------------------------
 def get_image(bot, update):
-    userName = update.message.from_user.first_name
+    #userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
-    result=""
-    result=db_manager.removeAll(chat_id, userName)
-    if(result==""):
-        result="No countdowns to remove!"
-    update.message.reply_text(result)
+    bot.send_photo(chat_id=chat_id, photo='https://telegram.org/img/t_logo.png')
 
 
 def openshiftStart():
