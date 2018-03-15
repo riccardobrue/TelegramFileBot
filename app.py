@@ -13,9 +13,10 @@ logger = logging.getLogger(__name__)
 
 DATE, MESSAGE = range(2)
 
-#https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#post-an-image-file-from-disk
-#http://python-telegram-bot.readthedocs.io/en/stable/telegram.ext.updater.html?highlight=updater
-#https://github.com/python-telegram-bot/python-telegram-bot#documentation
+
+# https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#post-an-image-file-from-disk
+# http://python-telegram-bot.readthedocs.io/en/stable/telegram.ext.updater.html?highlight=updater
+# https://github.com/python-telegram-bot/python-telegram-bot#documentation
 
 # ==============================================================================================
 def help(bot, update):
@@ -237,23 +238,27 @@ def get_image(bot, update):
     # userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
     bot.send_photo(chat_id=chat_id, photo='https://telegram.org/img/t_logo.png')
+
+
 # ==========================------------------------------------
 def get_file(bot, update):
     # userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
-    #url = "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/505218/IC_Energy_Report_web.pdf"
-    url="https://github.com/riccardobrue/hello_world/blob/master/testing_zip.zip?raw=true"
+    # url = "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/505218/IC_Energy_Report_web.pdf"
+    url = "https://github.com/riccardobrue/hello_world/blob/master/testing_zip.zip?raw=true"
     file = urlopen(url)
     file.name = 'testing.zip'
 
     meta = file.info()
-    byte_size=int(meta["Content-Length"])
-    print("SIZE (bytes): "+str(byte_size))
-    if byte_size>=20000000:
+    byte_size = int(meta["Content-Length"])
+    print("SIZE (bytes): " + str(byte_size))
+    if byte_size >= 20000000:
         update.message.reply_text("File too large to be downloaded via telegram!")
     else:
         bot.send_document(chat_id=chat_id, document=file)
-        #bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
+        # bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
+
+
 # ==============================================================================================
 def send_file(bot, update):
     userName = update.message.from_user.first_name
@@ -262,19 +267,18 @@ def send_file(bot, update):
     print("A")
     file = bot.get_file(update.message.document[-1].file_id)
     print("B")
-    file_name=update.message.document[-1].file_name
+    file_name = update.message.document[-1].file_name
     print("C")
-    file_type=update.message.document[-1].mime_type
+    file_type = update.message.document[-1].mime_type
     print("D")
-    file_size=update.message.document[-1].file_size
+    file_size = update.message.document[-1].file_size
     print("D")
 
-    #file = bot.get_file(update.message.photo[-1].file_id)
+    # file = bot.get_file(update.message.photo[-1].file_id)
     file.download('user_photo.jpg')
-    print("File of"+userName+'user_photo.jpg'+file_name+"."+file_type+" ("+str(file_size)+")")
+    print("File of" + userName + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
 
     bot.send_photo(chat_id=chat_id, photo=file)
-
 
 
 # ==============================================================================================
@@ -306,6 +310,25 @@ def openshiftStart():
     )
     dispatcher.add_handler(conv_handler)
     # ==============================================================================================
+    """
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', start)],
+
+        states={
+            GENDER: [RegexHandler('^(Boy|Girl|Other)$', gender)],
+
+            PHOTO: [MessageHandler(Filters.photo, photo),
+                    CommandHandler('skip', skip_photo)],
+
+            LOCATION: [MessageHandler(Filters.location, location),
+                       CommandHandler('skip', skip_location)],
+
+            BIO: [MessageHandler(Filters.text, bio)]
+        },
+
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+    """
 
     dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_handler(CommandHandler('show', show_countdowns))
@@ -316,8 +339,8 @@ def openshiftStart():
     dispatcher.add_handler(CommandHandler('get_image', get_image))
     dispatcher.add_handler(CommandHandler('get_file', get_file))
 
-    dispatcher.add_handler(CommandHandler('send_file', send_file, pass_args=True))
-
+    # dispatcher.add_handler(CommandHandler('send_file', send_file, pass_args=True))
+    dispatcher.add_handler(MessageHandler(Filters.document, send_file))
 
 
 
