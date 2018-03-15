@@ -264,13 +264,12 @@ def send_file(bot, update):
     userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
 
-
     file_name = update.message.document.file_name
     file_type = update.message.document.mime_type
     file_size = update.message.document.file_size
 
     print(file_name+"_"+str(file_type)+"_"+str(file_size))
-    
+
     file = bot.get_file(update.message.document.file_id)
     file.download('file.jpg')
     print("File of" + userName + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
