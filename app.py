@@ -241,7 +241,7 @@ def get_file(bot, update):
     #url = "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/505218/IC_Energy_Report_web.pdf"
     url="https://github.com/riccardobrue/hello_world/blob/master/testing_zip.zip?raw=true"
     file = urlopen(url)
-    file.name = 'testing.pdf'
+    file.name = 'testing.zip'
 
     meta = file.info()
     mb_size=int(meta["Content-Length"])
