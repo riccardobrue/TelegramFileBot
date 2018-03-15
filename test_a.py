@@ -4,7 +4,6 @@ from io import BytesIO
 
 url="https://github.com/riccardobrue/hello_world/blob/master/testing_zip.zip?raw=true"
 object1 = urlopen(url)
-object2 =   open('test.zip', 'rb')
 #urllib.request.urlretrieve("http://audio.radio24.ilsole24ore.com/radio24_audio/2018/180314-lazanzara.mp3", '/cat.mp3')
 
 
@@ -15,4 +14,3 @@ print (int(meta["Content-Length"]))
 
 #print(object1.read())
 print(object1)
-print(object2)

@@ -249,7 +249,6 @@ def get_file(bot, update):
         update.message.reply_text("File too large to be downloaded via telegram!")
     else:
         bot.send_document(chat_id=chat_id, document=file)
-        #bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
 # ==============================================================================================
 # ==============================================================================================
 
