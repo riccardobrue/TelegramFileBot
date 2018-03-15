@@ -265,7 +265,7 @@ def send_file(bot, update):
     chat_id = update.message.chat_id
 
     print("A")
-    file = bot.get_file(update.message.document[-1].file_id)
+    #file = bot.get_file(update.message.document[-1].file_id)
     print("B")
     file_name = update.message.document[-1].file_name
     print("C")
