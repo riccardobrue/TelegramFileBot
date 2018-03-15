@@ -237,7 +237,9 @@ def get_image(bot, update):
 def get_file(bot, update):
     # userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
-    content = urlopen("http://audio.radio24.ilsole24ore.com/radio24_audio/2018/180314-lazanzara.mp3")
+    url = "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/505218/IC_Energy_Report_web.pdf"
+    content = urlopen(url)
+
     bot.send_document(chat_id=chat_id, document=content)
     #bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
 # ==============================================================================================
