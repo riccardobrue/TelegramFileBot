@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 DATE, MESSAGE = range(2)
 
-
+#https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#post-an-image-file-from-disk
 # ==============================================================================================
 def help(bot, update):
     helpText = "Hello! this is the CountdownBot!\n" \
@@ -238,17 +238,18 @@ def get_image(bot, update):
 def get_file(bot, update):
     # userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
-    print("TESTING 1")
     #url = "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/505218/IC_Energy_Report_web.pdf"
     url = "http://audio.radio24.ilsole24ore.com/radio24_audio/2018/180314-lazanzara.mp3"
-    content = urlopen(url)
-    print("TESTING 2")
+    file = urlopen(url)
     #content.name = 'testing.pdf'
-    content.name = 'testing.mp3'
-    print("TESTING 3")
-
-    bot.send_document(chat_id=chat_id, document=content)
-    #bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
+    file.name = 'testing.mp3'
+    meta = file.info()
+    mb_size=int(meta["Content-Length"])
+    if mb_size>=20000000:
+        update.message.reply_text("File too large to be downloaded via telegram!")
+    else:
+        bot.send_document(chat_id=chat_id, document=file)
+        #bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
 # ==============================================================================================
 # ==============================================================================================
 
