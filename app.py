@@ -1,6 +1,7 @@
 import logging
 import db_manager
 import datetime
+from urllib.request import urlopen
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
 
@@ -9,29 +10,33 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+DATE, MESSAGE = range(2)
 
-DATE, MESSAGE  = range(2)
 
-#==============================================================================================
+# ==============================================================================================
 def help(bot, update):
-    helpText="Hello! this is the CountdownBot!\n" \
-             "List of commands:\n" \
-             "- /insert : Start the countdown inseriment process\n" \
-             "-- /dismiss : Dismiss the current insertion process\n" \
-             "-- /skip : Skip the inseriment of a 'message' for the countdown\n" \
-             "- /show : Shows all the saved countdowns\n" \
-             "- /remove_all : Removes all the saved countdowns\n" \
-             "- /delete <index>: Removes the given countdown by the index\n" \
-             "- /start <index> : Starts the selected countdown notifications\n" \
-             "- /stop <index> : Stops the selected countdown notifications\n" \
-             "- /get <index> : Shows how many days left in a countdown"
+    helpText = "Hello! this is the CountdownBot!\n" \
+               "List of commands:\n" \
+               "- /insert : Start the countdown inseriment process\n" \
+               "-- /dismiss : Dismiss the current insertion process\n" \
+               "-- /skip : Skip the inseriment of a 'message' for the countdown\n" \
+               "- /show : Shows all the saved countdowns\n" \
+               "- /remove_all : Removes all the saved countdowns\n" \
+               "- /delete <index>: Removes the given countdown by the index\n" \
+               "- /start <index> : Starts the selected countdown notifications\n" \
+               "- /stop <index> : Stops the selected countdown notifications\n" \
+               "- /get <index> : Shows how many days left in a countdown"
     update.message.reply_text(helpText)
-#==============================================================================================
-#==============================================================================================
+
+
+# ==============================================================================================
+# ==============================================================================================
 def alarm(bot, job):
     """Send the alarm message."""
     bot.send_message(job.context, text='Beep!')
-#==========================------------------------------------
+
+
+# ==========================------------------------------------
 def start(bot, update, args, job_queue, chat_data):
     chat_id = update.message.chat_id
     userName = update.message.from_user.first_name
@@ -39,15 +44,13 @@ def start(bot, update, args, job_queue, chat_data):
     if (args[0] != None and isinstance(int(args[0]), int)):
         index = int(args[0])
         countdown = db_manager.getSingle(chat_id, userName, index - 1)  # because starts from 1
-        date=countdown["date"]
-        message=countdown["message"]
+        date = countdown["date"]
+        message = countdown["message"]
         today = datetime.datetime.utcnow()
 
-        notificationtime="02:00"
+        notificationtime = "02:00"
 
-
-        update.message.reply_text("DATE: "+str(date)+"\n"+"MESSAGE: "+message+"\n" +"TODAY: "+str(today))
-
+        update.message.reply_text("DATE: " + str(date) + "\n" + "MESSAGE: " + message + "\n" + "TODAY: " + str(today))
 
         try:
             # args[0] should contain the time for the timer in seconds
@@ -68,6 +71,7 @@ def start(bot, update, args, job_queue, chat_data):
     else:
         update.message.reply_text("You must specify which countdown to start!")
 
+
 # ==========================------------------------------------
 def stop(bot, update, chat_data):
     """Remove the job if the user changed their mind."""
@@ -78,8 +82,10 @@ def stop(bot, update, chat_data):
     job.schedule_removal()
     del chat_data['job']
     update.message.reply_text('Timer successfully unset!')
-#==============================================================================================
-def instantGet(bot, update, args ):
+
+
+# ==============================================================================================
+def instantGet(bot, update, args):
     chat_id = update.message.chat_id
     userName = update.message.from_user.first_name
 
@@ -93,32 +99,36 @@ def instantGet(bot, update, args ):
 
         difference = targetDate - today
 
-        update.message.reply_text( str(difference.days)+ " days left!")
+        update.message.reply_text(str(difference.days) + " days left!")
 
     else:
         update.message.reply_text("You must specify which countdown to show!")
 
 
-#==============================================================================================
-#==============================================================================================
-#==============================================================================================
-#==============================================================================================
+# ==============================================================================================
+# ==============================================================================================
+# ==============================================================================================
+# ==============================================================================================
 def clear(user_data):
     if 'data' in user_data:
         del user_data['data']
     user_data.clear()
-#==========================------------------------------------
+
+
+# ==========================------------------------------------
 def timer_insert(bot, update):
     user = update.message.from_user
     logger.info("Start received from %s: %s", user.first_name, update.message.text)
-    response="Hello!\n" \
-             "Instantiate a countdown\n" \
-             "Please send me a date (dd-mm-yyyy)\n" \
-             "[You can /dismiss this process]"
+    response = "Hello!\n" \
+               "Instantiate a countdown\n" \
+               "Please send me a date (dd-mm-yyyy)\n" \
+               "[You can /dismiss this process]"
     update.message.reply_text(response)
     return DATE
-#==========================------------------------------------
-def set_timer_date(bot, update,user_data):
+
+
+# ==========================------------------------------------
+def set_timer_date(bot, update, user_data):
     user = update.message.from_user
     logger.info("Countdown date from %s: %s", user.first_name, update.message.text)
     targetDate = datetime.datetime.strptime(update.message.text, '%d-%m-%Y').date()
@@ -135,76 +145,104 @@ def set_timer_date(bot, update,user_data):
         clear(user_data)
         update.message.reply_text('Date not valid!')
         return ConversationHandler.END
-#==========================------------------------------------
-def set_timer_message(bot, update,user_data):
+
+
+# ==========================------------------------------------
+def set_timer_message(bot, update, user_data):
     set_countdown(bot, update, update.message.text, user_data['data'])
     clear(user_data)
     return ConversationHandler.END
-#==========================------------------------------------
+
+
+# ==========================------------------------------------
 def skip_timer_message(bot, update, user_data):
-    set_countdown(bot,update, None, user_data['data'])
+    set_countdown(bot, update, None, user_data['data'])
     clear(user_data)
     return ConversationHandler.END
-#==========================------------------------------------
+
+
+# ==========================------------------------------------
 def set_countdown(bot, update, message, data):
     db_manager.add(update.message.chat_id, update.message.from_user.first_name, message, data, 0)
     update.message.reply_text("Countdown set\n"
                               "Do not forget to /start <index> the countdown!\n"
                               "Bye!")
-#==========================------------------------------------
+
+
+# ==========================------------------------------------
 def dismiss(bot, update, user_data):
     user = update.message.from_user
     logger.info("User %s dismissed the conversation.", user.first_name)
     update.message.reply_text('Dismissed. Bye!')
     clear(user_data)
     return ConversationHandler.END
-#==============================================================================================
+
+
+# ==============================================================================================
 def show_countdowns(bot, update):
     user = update.message.from_user
     chat_id = update.message.chat_id
     logger.info("Message from %s: %s", user.first_name, update.message.text)
 
-    countdowns=db_manager.getAll(chat_id,user.first_name)
-    message=""
+    countdowns = db_manager.getAll(chat_id, user.first_name)
+    message = ""
     for countdown in countdowns:
-        message+=str(countdown["counter"]+1)+")"+str(countdown["date"])+": "+countdown["message"]+"\n"
-    if(message==""):
-        message="No countdowns to display!"
+        message += str(countdown["counter"] + 1) + ")" + str(countdown["date"]) + ": " + countdown["message"] + "\n"
+    if (message == ""):
+        message = "No countdowns to display!"
     update.message.reply_text(message)
-#==============================================================================================
+
+
+# ==============================================================================================
 def delete_single(bot, update, args):
     userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
 
-    if(args[0]!=None and isinstance(int(args[0]),int)):
+    if (args[0] != None and isinstance(int(args[0]), int)):
         index = int(args[0])
-        result=db_manager.removeOne(chat_id,userName,index-1)#because starts from 1
+        result = db_manager.removeOne(chat_id, userName, index - 1)  # because starts from 1
         update.message.reply_text(result)
         return
     else:
         update.message.reply_text("You must specify the countdown to remove")
-#==========================------------------------------------
+
+
+# ==========================------------------------------------
 def delete_all(bot, update):
     userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
-    result=""
-    result=db_manager.removeAll(chat_id, userName)
-    if(result==""):
-        result="No countdowns to remove!"
+    result = ""
+    result = db_manager.removeAll(chat_id, userName)
+    if (result == ""):
+        result = "No countdowns to remove!"
     update.message.reply_text(result)
-#==============================================================================================
+
+
+# ==============================================================================================
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
-#==============================================================================================
 
 
+# ==============================================================================================
 
-#==========================------------------------------------
+
+# ==============================================================================================
+# ==============================================================================================
 def get_image(bot, update):
-    #userName = update.message.from_user.first_name
+    # userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
     bot.send_photo(chat_id=chat_id, photo='https://telegram.org/img/t_logo.png')
+# ==========================------------------------------------
+def get_file(bot, update):
+    # userName = update.message.from_user.first_name
+    chat_id = update.message.chat_id
+    content = urlopen("http://audio.radio24.ilsole24ore.com/radio24_audio/2018/180314-lazanzara.mp3")
+    bot.send_document(chat_id=chat_id, document=content)
+    #bot.send_document(chat_id=chat_id, document=open('tests/test.zip', 'rb'))
+# ==============================================================================================
+# ==============================================================================================
+
 
 
 def openshiftStart():
@@ -217,15 +255,16 @@ def openshiftStart():
         entry_points=[CommandHandler('insert', timer_insert)],
         states={
             DATE: [
-                RegexHandler('^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])[-]([0-9]{4}|[0-9]{2})$', set_timer_date,pass_user_data=True)
+                RegexHandler('^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])[-]([0-9]{4}|[0-9]{2})$',
+                             set_timer_date, pass_user_data=True)
             ],
             MESSAGE: [
-                MessageHandler(Filters.text, set_timer_message,pass_user_data=True),
-                RegexHandler('^([/]skip)$', skip_timer_message,pass_user_data=True)
+                MessageHandler(Filters.text, set_timer_message, pass_user_data=True),
+                RegexHandler('^([/]skip)$', skip_timer_message, pass_user_data=True)
             ]
         },
         fallbacks=[
-            RegexHandler('^([/]dismiss)$', dismiss,pass_user_data=True)
+            RegexHandler('^([/]dismiss)$', dismiss, pass_user_data=True)
         ]
     )
     dispatcher.add_handler(conv_handler)
@@ -233,69 +272,62 @@ def openshiftStart():
 
     dispatcher.add_handler(CommandHandler('help', help))
     dispatcher.add_handler(CommandHandler('show', show_countdowns))
-    dispatcher.add_handler(CommandHandler("delete", delete_single,pass_args=True))
+    dispatcher.add_handler(CommandHandler("delete", delete_single, pass_args=True))
     dispatcher.add_handler(CommandHandler('remove_all', delete_all))
 
-    #test get image
+    # test get image
     dispatcher.add_handler(CommandHandler('get_image', get_image))
-
-
+    dispatcher.add_handler(CommandHandler('get_file', get_file))
 
     dispatcher.add_handler(CommandHandler("start", start,
-                                    pass_args=True,
-                                    pass_job_queue=True,
-                                    pass_chat_data=True))
+                                          pass_args=True,
+                                          pass_job_queue=True,
+                                          pass_chat_data=True))
 
     dispatcher.add_handler(CommandHandler("stop", stop,
-                                    pass_args=True,
-                                    pass_chat_data=True))
+                                          pass_args=True,
+                                          pass_chat_data=True))
 
     dispatcher.add_handler(CommandHandler("get", instantGet,
-                                    pass_args=True))
+                                          pass_args=True))
 
     # log all errors
     dispatcher.add_error_handler(error)
 
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
     updater.start_polling()
     updater.idle()
 
 
-
-
-
-
-
-
 def localTesting():
-    message=db_manager.add(30,"test123","testing message","06/02/2018",0)
+    message = db_manager.add(30, "test123", "testing message", "06/02/2018", 0)
     print(message)
-    #message=db_manager.edit(30,"test123","test345","06/03/2019",0)
-    #print(message)
-    countdown=db_manager.getSingle(30,"test123",0)
-    #print(message)
-    #record=db_manager.getAll(30,"test123")
-    #for doc in record:
+    # message=db_manager.edit(30,"test123","test345","06/03/2019",0)
+    # print(message)
+    countdown = db_manager.getSingle(30, "test123", 0)
+    # print(message)
+    # record=db_manager.getAll(30,"test123")
+    # for doc in record:
     #   print(doc)
 
     targetDate = datetime.datetime.strptime(countdown["date"], '%d/%m/%Y').date()
     message = countdown["message"]
     today = datetime.datetime.utcnow().date()
 
-    difference=targetDate-today
+    difference = targetDate - today
 
-    print("DATE: " + str(targetDate) + "\nMESSAGE: " + message + "\nTODAY: " + str(today)+"\nDIFFERENCE: ")
+    print("DATE: " + str(targetDate) + "\nMESSAGE: " + message + "\nTODAY: " + str(today) + "\nDIFFERENCE: ")
 
     print(str(difference.days))
 
 
 openshiftStart()
-#localTesting()
+# localTesting()
 
-#localTesting()
-#import test
-#test.mainTest()
+# localTesting()
+# import test
+# test.mainTest()
 
 
 """
