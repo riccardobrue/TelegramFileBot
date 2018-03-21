@@ -265,11 +265,11 @@ def get_file(bot, update):
 def send_file(bot, update):
     chat_id = update.message.chat_id
     userInfo = update.message.from_user
-    #userContact = update.message.contact
+    # userContact = update.message.contact
 
     user_first_name = userInfo.first_name
     user_second_name = userInfo.last_name
-    #phone_number = userContact.phone_number
+    # phone_number = userContact.phone_number
     user_id = userInfo.id
     username = userInfo.username
 
@@ -279,7 +279,7 @@ def send_file(bot, update):
     print("User Second Name: " + user_second_name)
     print("Username: " + username)
     print("User ID: " + str(user_id))
-    #print("Phone Number: " + phone_number)
+    # print("Phone Number: " + phone_number)
     print("==================================")
 
     file_name = update.message.document.file_name
@@ -289,13 +289,13 @@ def send_file(bot, update):
     print(file_name + "_" + str(file_type) + "_" + str(file_size))
 
     file = bot.get_file(update.message.document.file_id)
-    #================================================================
+    # ================================================================
     # Trying to send a file to Altervista
-    #================================================================
+    # ================================================================
     url = 'http://riccardobruetesting.altervista.org/APIs/file/file_api.php'
+    r = requests.post(url, files={file_name: file})
 
-
-    #================================================================
+    # ================================================================
     file.download('file.jpg')
     print("File of" + user_first_name + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
 
