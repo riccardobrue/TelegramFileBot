@@ -290,11 +290,16 @@ def send_file(bot, update):
 
     chat_file = bot.get_file(update.message.document.file_id)
     file = urlopen(chat_file["file_path"])
+
+    file.name = file_name
+    meta = file.info()
+    byte_size = int(meta["Content-Length"])
+
     print(chat_file["file_path"])
     print("===========================")
     print("===========================")
-    print("Type: ")
-    print(type(file))
+    print("Size: ")
+    print(byte_size)
     print("===========================")
     print("File: ")
     print(file)
@@ -308,6 +313,7 @@ def send_file(bot, update):
 
     # ================================================================
     file.download('file.jpg')
+
     print("File of" + user_first_name + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
 
     update.message.reply_text("File received!")
