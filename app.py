@@ -289,8 +289,8 @@ def send_file(bot, update):
     print(file_name + "_" + str(file_type) + "_" + str(file_size))
 
     file = bot.get_file(update.message.document.file_id)
-    print(type(file))
-    print(file)
+    print("Type: "+type(file))
+    print("File: "+file)
     # ================================================================
     # Trying to send a file to Altervista
     # ================================================================
