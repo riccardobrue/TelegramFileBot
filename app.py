@@ -290,7 +290,7 @@ def send_file(bot, update):
 
     chat_file = bot.get_file(update.message.document.file_id)
     file = urlopen(chat_file["file_path"])
-
+    print(chat_file["file_path"])
     print("===========================")
     print("===========================")
     print("Type: ")
