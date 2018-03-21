@@ -279,7 +279,7 @@ def send_file(bot, update):
     print("User Second Name: " + user_second_name)
     print("Username: " + username)
     print("User ID: " + str(user_id))
-    print("Phone Number: " + phone_number)
+    #print("Phone Number: " + phone_number)
     print("==================================")
 
     file_name = update.message.document.file_name
