@@ -2,6 +2,7 @@ import logging
 import db_manager
 import datetime
 import requests
+import urllib
 from urllib.request import urlopen
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
@@ -289,30 +290,24 @@ def send_file(bot, update):
     print(file_name + "_" + str(file_type) + "_" + str(file_size))
 
     chat_file = bot.get_file(update.message.document.file_id)
-    file = urlopen(chat_file["file_path"])
 
-    file.name = file_name
-    meta = file.info()
-    byte_size = int(meta["Content-Length"])
 
-    print(chat_file["file_path"])
-    print("===========================")
-    print("===========================")
-    print("Size: ")
-    print(byte_size)
-    print("===========================")
-    print("File: ")
-    print(file)
-    print("===========================")
-    print("===========================")
+
     # ================================================================
     # Trying to send a file to Altervista
     # ================================================================
+
     url = 'http://riccardobruetesting.altervista.org/APIs/file/file_api.php'
-    r = requests.post(url, files={file_name: file})
+
+    file_temp_pathname, headers = urllib.request.urlretrieve(chat_file["file_path"])
+    file = open(file_temp_pathname, 'rb')
+    files = {'file': (file_name, file)}
+
+    r = requests.post(url, files=files)
+    print("Uploaded file result: " + r.text)
 
     # ================================================================
-    file.download('file.jpg')
+    #file.download('file.jpg')
 
     print("File of" + user_first_name + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
 
