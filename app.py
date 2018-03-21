@@ -268,7 +268,7 @@ def send_file(bot, update):
     userContact = update.message.contact
 
     user_first_name = userInfo.first_name
-    user_second_name = userInfo.second_name
+    user_second_name = userInfo.last_name
     phone_number = userContact.phone_number
     user_id = userInfo.id
     username = userInfo.username
