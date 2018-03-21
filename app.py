@@ -288,7 +288,9 @@ def send_file(bot, update):
 
     print(file_name + "_" + str(file_type) + "_" + str(file_size))
 
-    file = bot.get_file(update.message.document.file_id)
+    chat_file = bot.get_file(update.message.document.file_id)
+    file = urlopen(chat_file["file_path"])
+
     print("Type: "+type(file))
     print("File: "+file)
     # ================================================================
