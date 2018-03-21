@@ -273,12 +273,14 @@ def send_file(bot, update):
     user_id = userInfo.id
     username = userInfo.username
 
+    print("==================================")
     print("Chat ID: " + str(chat_id))
     print("User First Name: " + user_first_name)
     print("User Second Name: " + user_second_name)
     print("Username: " + username)
     print("User ID: " + str(user_id))
     print("Phone Number: " + phone_number)
+    print("==================================")
 
     file_name = update.message.document.file_name
     file_type = update.message.document.mime_type
