@@ -2,6 +2,7 @@ import logging
 import db_manager
 import datetime
 from io import BytesIO
+import requests
 from urllib.request import urlopen
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
@@ -289,6 +290,17 @@ def send_file(bot, update):
     print(file_name + "_" + str(file_type) + "_" + str(file_size))
 
     file = bot.get_file(update.message.document.file_id)
+    #================================================================
+    # Trying to send a file to Altervista
+    #================================================================
+
+    url = 'http://riccardobruetesting.altervista.org/file_api.php'
+    #files = {'file': open('image.png', 'rb')}
+    #r = requests.post(url, files=files)
+
+    r = requests.post(url, files=file)
+
+    #================================================================
     file.download('file.jpg')
     print("File of" + user_first_name + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
 
