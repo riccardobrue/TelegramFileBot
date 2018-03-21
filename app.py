@@ -260,19 +260,35 @@ def get_file(bot, update):
 
 
 # ==============================================================================================
+# Receives a file from the chat
+# ==============================================================================================
 def send_file(bot, update):
-    userName = update.message.from_user.first_name
     chat_id = update.message.chat_id
+    userInfo = update.message.from_user
+    userContact = update.message.contact
+
+    user_first_name = userInfo.first_name
+    user_second_name = userInfo.second_name
+    phone_number = userContact.phone_number
+    user_id = userInfo.id
+    username = userInfo.username
+
+    print("Chat ID: " + str(chat_id))
+    print("User First Name: " + user_first_name)
+    print("User Second Name: " + user_second_name)
+    print("Username: " + username)
+    print("User ID: " + str(user_id))
+    print("Phone Number: " + phone_number)
 
     file_name = update.message.document.file_name
     file_type = update.message.document.mime_type
     file_size = update.message.document.file_size
 
-    print(file_name+"_"+str(file_type)+"_"+str(file_size))
+    print(file_name + "_" + str(file_type) + "_" + str(file_size))
 
     file = bot.get_file(update.message.document.file_id)
     file.download('file.jpg')
-    print("File of" + userName + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
+    print("File of" + user_first_name + 'user_photo.jpg' + file_name + "." + file_type + " (" + str(file_size) + ")")
 
     update.message.reply_text("File received!")
 
@@ -336,8 +352,6 @@ def openshiftStart():
 
     # dispatcher.add_handler(CommandHandler('send_file', send_file, pass_args=True))
     dispatcher.add_handler(MessageHandler(Filters.document, send_file))
-
-
 
     dispatcher.add_handler(CommandHandler("start", start,
                                           pass_args=True,
