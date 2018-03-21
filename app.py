@@ -265,11 +265,11 @@ def get_file(bot, update):
 def send_file(bot, update):
     chat_id = update.message.chat_id
     userInfo = update.message.from_user
-    userContact = update.message.contact
+    #userContact = update.message.contact
 
     user_first_name = userInfo.first_name
     user_second_name = userInfo.last_name
-    phone_number = userContact.phone_number
+    #phone_number = userContact.phone_number
     user_id = userInfo.id
     username = userInfo.username
 
