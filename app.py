@@ -291,7 +291,6 @@ def send_file(bot, update):
     chat_file = bot.get_file(update.message.document.file_id)
     file = urlopen(chat_file["file_path"])
 
-    print("Type: "+type(file))
     print("File: "+file)
     # ================================================================
     # Trying to send a file to Altervista
