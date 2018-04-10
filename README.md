@@ -1,3 +1,1 @@
-Testing Telegram application
-
-Initial release
+Telegram Bot for BlueCloud service.
